@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">pKeeper</string>
+    <string name="all_notes">All Notes</string>
+    <string name="add">Add</string>
+    <string name="done">DONE</string>
+    <string name="new_notes">New Notes</string>
+    <string name="today">Today</string>
+</resources>
