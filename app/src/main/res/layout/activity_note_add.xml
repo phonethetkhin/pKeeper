@@ -24,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include" />
 
-    <com.example.pkeeper.utility.LinedEditText
+    <com.ptk.pkeeper.utility.LinedEditText
         android:id="@+id/letNoteBody"
         android:layout_width="match_parent"
         android:layout_height="0dp"
