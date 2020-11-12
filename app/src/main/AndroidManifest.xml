@@ -9,9 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.ptk.pkeeper.ui.NoteEditActivity"/>
-        <activity android:name="com.ptk.pkeeper.ui.NoteAddActivity" />
-        <activity android:name="com.ptk.pkeeper.ui.MainActivity">
+        <activity android:name=".ui.VerificationActivity" />
+        <activity android:name=".ui.NoteEditActivity" />
+        <activity android:name=".ui.NoteAddActivity" />
+        <activity
+            android:name=".ui.MainActivity"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

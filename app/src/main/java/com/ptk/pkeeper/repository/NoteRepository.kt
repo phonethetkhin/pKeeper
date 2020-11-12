@@ -14,8 +14,14 @@ class NoteRepository(private val noteDao: NoteDao) {
         return noteDao.getAllNotes()
     }
 
-    suspend fun updateNote(noteId: Int, noteBody: String, lastModifiedDate: String) {
-        noteDao.updateNote(noteId, noteBody, lastModifiedDate)
+    suspend fun updateNote(
+        noteId: Int,
+        noteTitle: String?,
+        noteBody: String,
+        lastModifiedDate: String,
+        encrypted: Boolean
+    ) {
+        noteDao.updateNote(noteId, noteTitle, noteBody, lastModifiedDate, encrypted)
     }
 
     suspend fun deleteNote(noteId: Int) {

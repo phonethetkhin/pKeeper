@@ -56,7 +56,7 @@ class NoteAddActivity : AppCompatActivity() {
         if (TextUtils.isEmpty(noteBody)) {
             finish()
         } else {
-            val noteEntity = NoteEntity(0, noteBody, getFullDate(), null)
+            val noteEntity = NoteEntity(0,null, noteBody, getFullDate(), null,false)
             noteVModel.insertNote(noteEntity)
             finish()
         }

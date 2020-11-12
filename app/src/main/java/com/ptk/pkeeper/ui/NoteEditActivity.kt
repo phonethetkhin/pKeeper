@@ -4,6 +4,7 @@
 package com.ptk.pkeeper.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.TextUtils
@@ -29,6 +30,8 @@ class NoteEditActivity : AppCompatActivity() {
     private lateinit var tlbToolbar: Toolbar
     private lateinit var bnvBottomNavigation: BottomNavigationView
     var noteId = 0
+    var noteTitle: String? = null
+    var encryptedStatus = false
     var noteModel: NoteEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +41,18 @@ class NoteEditActivity : AppCompatActivity() {
         bnvBottomNavigation = findViewById(R.id.bnvBottomNavigation)
         noteVModel = ViewModelProviders.of(this).get(NoteVModel::class.java)
         noteModel = intent.getParcelableExtra<NoteEntity>("noteModel")
+
         noteId = noteModel!!.noteId
+        noteTitle = noteModel!!.noteTitle
+        encryptedStatus = noteModel!!.encrypted
+
+        if (encryptedStatus) {
+            bnvBottomNavigation.menu.findItem(R.id.nav_encrypt).isVisible = false
+            bnvBottomNavigation.menu.findItem(R.id.nav_decrypt).isVisible = true
+        } else {
+            bnvBottomNavigation.menu.findItem(R.id.nav_encrypt).isVisible = true
+            bnvBottomNavigation.menu.findItem(R.id.nav_decrypt).isVisible = false
+        }
 
         //set texts
         txtLastModifiedDateHour.text = noteModel!!.notedDate
@@ -49,13 +63,20 @@ class NoteEditActivity : AppCompatActivity() {
         bnvBottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_encrypt -> {
-                    val defaultText = letNoteBody.text.toString()
-                    val encryptedText = EncryptionUtil.encrypt(defaultText)
-                    noteVModel.updateNote(noteId, encryptedText, getFullDate())
-                    finish()
+                    val intent = Intent(this, VerificationActivity::class.java)
+                    intent.putExtra("noteId", noteId)
+                    intent.putExtra("defaultText", letNoteBody.text.toString())
+                    startActivity(intent)
+
                 }
                 R.id.nav_delete -> {
                     addingDialog(noteId, this, true)
+                }
+                R.id.nav_decrypt -> {
+                    val defaultText = letNoteBody.text.toString()
+                    val decryptedText = EncryptionUtil.decrypt(defaultText)
+                    noteVModel.updateNote(noteId, noteTitle, decryptedText, getFullDate(), false)
+                    finish()
                 }
             }
             true
@@ -81,7 +102,7 @@ class NoteEditActivity : AppCompatActivity() {
     private fun editFunction() {
         val noteBody = letNoteBody.text.toString()
         if (noteModel!!.noteBody != noteBody) {
-            noteVModel.updateNote(noteId, noteBody, getFullDate())
+            noteVModel.updateNote(noteId, noteTitle, noteBody, getFullDate(), false)
             finish()
         } else {
             finish()

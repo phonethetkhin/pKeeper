@@ -6,5 +6,6 @@
 
     <color name="white">#FFFFFF</color>
     <color name="noteBackground">#E8E880</color>
+    <color name="green">#028A08</color>
 
 </resources>

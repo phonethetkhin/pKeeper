@@ -15,8 +15,14 @@ interface NoteDao {
     @Query("SELECT * FROM tbl_notes")
     fun getAllNotes(): LiveData<List<NoteEntity>>
 
-    @Query("UPDATE tbl_notes SET note_body=:noteBody,noted_date=:lastModifiedDate WHERE note_id=:noteId")
-    suspend fun updateNote(noteId: Int, noteBody: String, lastModifiedDate: String)
+    @Query("UPDATE tbl_notes SET note_title=:noteTitle, note_body=:noteBody,noted_date=:lastModifiedDate,encrypted=:encrypted WHERE note_id=:noteId")
+    suspend fun updateNote(
+        noteId: Int,
+        noteTitle: String?,
+        noteBody: String,
+        lastModifiedDate: String,
+        encrypted: Boolean
+    )
 
     @Query("DELETE FROM tbl_notes WHERE note_id=:noteId")
     suspend fun deleteNote(noteId: Int)

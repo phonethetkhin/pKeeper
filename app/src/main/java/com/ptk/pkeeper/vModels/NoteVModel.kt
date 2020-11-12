@@ -25,9 +25,15 @@ class NoteVModel(application: Application) : AndroidViewModel(application) {
         return noteLiveData
     }
 
-    fun updateNote(noteId: Int, noteBody: String, lastModifiedDate: String) =
+    fun updateNote(
+        noteId: Int,
+        noteTitle: String?,
+        noteBody: String,
+        lastModifiedDate: String,
+        encrypted: Boolean
+    ) =
         viewModelScope.launch {
-            noteRepo.updateNote(noteId, noteBody, lastModifiedDate)
+            noteRepo.updateNote(noteId, noteTitle,  noteBody, lastModifiedDate, encrypted)
         }
 
     fun deleteNote(noteId: Int) = viewModelScope.launch {
