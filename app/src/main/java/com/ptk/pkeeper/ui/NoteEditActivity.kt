@@ -4,13 +4,17 @@
 package com.ptk.pkeeper.ui
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
@@ -24,6 +28,7 @@ import com.ptk.pkeeper.utility.getFullDate
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_note_edit.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
+
 
 class NoteEditActivity : AppCompatActivity() {
     lateinit var noteVModel: NoteVModel
@@ -63,20 +68,17 @@ class NoteEditActivity : AppCompatActivity() {
         bnvBottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_encrypt -> {
-                    val intent = Intent(this, VerificationActivity::class.java)
-                    intent.putExtra("noteId", noteId)
-                    intent.putExtra("defaultText", letNoteBody.text.toString())
-                    startActivity(intent)
-
+                    showCustomDialog()
                 }
                 R.id.nav_delete -> {
                     addingDialog(noteId, this, true)
                 }
                 R.id.nav_decrypt -> {
-                    val defaultText = letNoteBody.text.toString()
-                    val decryptedText = EncryptionUtil.decrypt(defaultText)
-                    noteVModel.updateNote(noteId, noteTitle, decryptedText, getFullDate(), false)
-                    finish()
+                    val intent = Intent(this, VerificationActivity::class.java)
+                    intent.putExtra("status",1)
+                    intent.putExtra("noteId", noteId)
+                    this.finish()
+                    startActivity(intent)
                 }
             }
             true
@@ -172,6 +174,33 @@ class NoteEditActivity : AppCompatActivity() {
             }
         }
         txtLastModifiedDate.text = resultText
+    }
+
+    private fun showCustomDialog() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.custom_dialog, null)
+        dialogBuilder.setView(dialogView)
+        val edtNoteTitle = dialogView.findViewById(R.id.edtNoteTitle) as EditText
+        dialogBuilder.setTitle("Enter Note Title")
+        dialogBuilder.setMessage("In order to encrypt, you need to specify note title to remember which note you encrypted.")
+        dialogBuilder.setPositiveButton("Done",
+            DialogInterface.OnClickListener { dialog, whichButton ->
+                noteTitle = edtNoteTitle.text.toString()
+                val intent = Intent(this, VerificationActivity::class.java)
+                intent.putExtra("status",0)
+                intent.putExtra("noteId", noteId)
+                intent.putExtra("noteTitle", noteTitle)
+                intent.putExtra("defaultText", letNoteBody.text.toString())
+                this.finish()
+                startActivity(intent)
+            })
+        dialogBuilder.setNegativeButton("Cancel",
+            DialogInterface.OnClickListener { dialog, whichButton ->
+                //pass
+            })
+        val b: AlertDialog = dialogBuilder.create()
+        b.show()
     }
 
 }

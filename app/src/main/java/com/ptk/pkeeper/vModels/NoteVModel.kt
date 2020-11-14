@@ -33,10 +33,14 @@ class NoteVModel(application: Application) : AndroidViewModel(application) {
         encrypted: Boolean
     ) =
         viewModelScope.launch {
-            noteRepo.updateNote(noteId, noteTitle,  noteBody, lastModifiedDate, encrypted)
+            noteRepo.updateNote(noteId, noteTitle, noteBody, lastModifiedDate, encrypted)
         }
 
     fun deleteNote(noteId: Int) = viewModelScope.launch {
         noteRepo.deleteNote(noteId)
+    }
+
+    fun getNoteById(noteId: Int): NoteEntity {
+        return noteRepo.getNoteById(noteId)
     }
 }

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
@@ -25,6 +26,7 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
     RecyclerView.Adapter<AllNotesAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        var imgLock: ImageView = v.findViewById(R.id.imgLock)
         var txtNoteInitial: TextView = v.findViewById(R.id.txtNoteInitial)
         var txtModifiedDate: TextView = v.findViewById(R.id.txtModifiedDate)
         var cslNote: ConstraintLayout = v.findViewById(R.id.cslNote)
@@ -37,7 +39,16 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.txtNoteInitial.text = noteList[position].noteBody
+        if (noteList[position].encrypted) {
+            holder.imgLock.visibility = View.VISIBLE
+        } else {
+            holder.imgLock.visibility = View.GONE
+        }
+        if (noteList[position].noteTitle != null) {
+            holder.txtNoteInitial.text = noteList[position].noteTitle
+        } else {
+            holder.txtNoteInitial.text = noteList[position].noteBody
+        }
         val date = getDateString(noteList[position].notedDate, "yyyy-MM-dd HH:mm:ss", "dd-MM")
         holder.txtModifiedDate.text = date
 
@@ -50,12 +61,12 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
                 }
 
                 override fun onLongClick() {
-                    addingDialog(noteList[position].noteId,app,false)
+                    addingDialog(noteList[position].noteId, app, false)
                     super.onLongClick()
                 }
 
                 override fun onSwipeLeft() {
-                    addingDialog(noteList[position].noteId,app,false)
+                    addingDialog(noteList[position].noteId, app, false)
                     super.onSwipeLeft()
                 }
 

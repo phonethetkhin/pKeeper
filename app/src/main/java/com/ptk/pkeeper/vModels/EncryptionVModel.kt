@@ -16,4 +16,9 @@ class EncryptionVModel(application: Application) : AndroidViewModel(application)
         encryptionRepository.insertEncryption(encryptionEntity)
     }
 
+    fun getEncryptionById(noteId: Int): EncryptionEntity
+    {
+         return encryptionRepository.getEncryptionById(noteId)
+    }
+
 }

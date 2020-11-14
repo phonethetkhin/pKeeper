@@ -25,6 +25,7 @@ class PinFragment : Fragment() {
     var firstPin = ""
     var secondPin = ""
     var noteId = 0
+    var noteTitle = ""
     var defaultText = ""
     private lateinit var noteVModel: NoteVModel
     private lateinit var encryptionVModel: EncryptionVModel
@@ -39,8 +40,7 @@ class PinFragment : Fragment() {
         v.pnvVerification.requestFocus()
         noteVModel = ViewModelProviders.of(activity!!).get(NoteVModel::class.java)
         encryptionVModel = ViewModelProviders.of(activity!!).get(EncryptionVModel::class.java)
-        noteId = arguments!!.getInt("noteId", 0)
-        defaultText = arguments!!.getString("defaultText", "")
+        val status = arguments!!.getInt("status", 0)
 
         //auto show soft keyboard when setting pin fragment
         showSoftKeyboard(v, activity!!)
@@ -51,7 +51,15 @@ class PinFragment : Fragment() {
             resources.getColor(R.color.green)
         )
         v.pnvVerification.setLineColor(colorStateList)
-        savePin(v)
+        if (status == 0) {
+            noteId = arguments!!.getInt("noteId", 0)
+            noteTitle = arguments!!.getString("noteTitle", "")
+            defaultText = arguments!!.getString("defaultText", "")
+            savePin(v)
+        } else {
+            noteId = arguments!!.getInt("noteId", 0)
+            checkPin(v)
+        }
         return v
     }
 
@@ -87,7 +95,13 @@ class PinFragment : Fragment() {
                             val encryptionEntity = EncryptionEntity(0, noteId, 0, secondPin)
                             encryptionVModel.insertEncryption(encryptionEntity)
                             val encryptedText = EncryptionUtil.encrypt(defaultText)
-                            noteVModel.updateNote(noteId, null, encryptedText, getFullDate(), true)
+                            noteVModel.updateNote(
+                                noteId,
+                                noteTitle,
+                                encryptedText,
+                                getFullDate(),
+                                true
+                            )
                             startActivity(Intent(activity!!, MainActivity::class.java))
                             activity!!.finishAffinity()
                         } else {
@@ -99,6 +113,49 @@ class PinFragment : Fragment() {
                 }
 
             }
+        })
+    }
+
+    private fun checkPin(v: View) {
+        //listen pin view event changed
+        v.txtTitle.text = resources.getString(R.string.enter_your_pin)
+        v.pnvVerification.inputType =
+            InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+        v.pnvVerification.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                Log.d("beforeTextChanged", "beforeTextChanged")
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                Log.d("onTextChanged", "onTextChange")
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                val verificationCode: String = v.pnvVerification.text.toString()
+                //get user input codes, if length is 4, check verification code is matched with secret pin in database
+                if (verificationCode.length == 4) {
+                    val currentEncryptionEntity = encryptionVModel.getEncryptionById(noteId)
+                    val currentNoteEntity = noteVModel.getNoteById(noteId)
+                    if (verificationCode == currentEncryptionEntity.password) {
+                        val defaultText = currentNoteEntity.noteBody
+                        val decryptedText = EncryptionUtil.decrypt(defaultText)
+                        noteVModel.updateNote(
+                            noteId,
+                            null,
+                            decryptedText,
+                            getFullDate(),
+                            false
+                        )
+                        hideSoftKeyboard(v, activity!!)
+                        showToastShort(activity!!, "Decrypted Successfully !!!")
+                        activity!!.finish()
+                    } else {
+                        hideSoftKeyboard(v, activity!!)
+                        showToastShort(activity!!, "Wrong PIN !!!")
+                    }
+                }
+            }
+
         })
     }
 

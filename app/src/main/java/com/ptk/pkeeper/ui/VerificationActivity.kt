@@ -11,17 +11,35 @@ class VerificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verification)
 
-        val noteId = intent!!.getIntExtra("noteId", 0)
-        val defaultText = intent!!.getStringExtra("defaultText")
-        val bundle = Bundle()
-        bundle.putInt("noteId", noteId)
-        bundle.putString("defaultText", defaultText)
-        setFragmentByBundle(
-            supportFragmentManager,
-            PinFragment(),
-            false,
-            R.id.fmlVerification,
-            bundle
-        )
+        val status = intent!!.getIntExtra("status", 0)
+        if (status == 0) {
+            val noteId = intent!!.getIntExtra("noteId", 0)
+            val noteTitle: String? = intent!!.getStringExtra("noteTitle")
+            val defaultText: String? = intent!!.getStringExtra("defaultText")
+            val bundle = Bundle()
+            bundle.putInt("noteId", noteId)
+            bundle.putInt("status", status)
+            bundle.putString("noteTitle", noteTitle)
+            bundle.putString("defaultText", defaultText)
+            setFragmentByBundle(
+                supportFragmentManager,
+                PinFragment(),
+                true,
+                R.id.fmlVerification,
+                bundle
+            )
+        } else {
+            val noteId = intent!!.getIntExtra("noteId", 0)
+            val bundle = Bundle()
+            bundle.putInt("noteId", noteId)
+            bundle.putInt("status", status)
+            setFragmentByBundle(
+                supportFragmentManager,
+                PinFragment(),
+                true,
+                R.id.fmlVerification,
+                bundle
+            )
+        }
     }
 }
