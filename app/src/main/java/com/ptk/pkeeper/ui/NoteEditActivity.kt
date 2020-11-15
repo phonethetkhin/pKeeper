@@ -21,8 +21,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
-import com.ptk.pkeeper.utility.EncryptionUtil
-import com.ptk.pkeeper.utility.addingDialog
+import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.getDateString
 import com.ptk.pkeeper.utility.getFullDate
 import com.ptk.pkeeper.vModels.NoteVModel
@@ -71,7 +70,7 @@ class NoteEditActivity : AppCompatActivity() {
                     showCustomDialog()
                 }
                 R.id.nav_delete -> {
-                    addingDialog(noteId, this, true)
+                    deleteDialog(noteId, this, true)
                 }
                 R.id.nav_decrypt -> {
                     val intent = Intent(this, VerificationActivity::class.java)

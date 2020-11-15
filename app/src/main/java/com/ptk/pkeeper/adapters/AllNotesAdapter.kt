@@ -18,7 +18,8 @@ import com.ptk.pkeeper.R
 import com.ptk.pkeeper.`interface`.OnSwipeTouchListener
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.ui.NoteEditActivity
-import com.ptk.pkeeper.utility.addingDialog
+import com.ptk.pkeeper.utility.deleteDialog
+import com.ptk.pkeeper.utility.encryptedDialog
 import com.ptk.pkeeper.utility.getDateString
 
 
@@ -56,22 +57,30 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
             object : OnSwipeTouchListener(app) {
 
                 override fun onClick() {
-                    setIntent(position)
+                    if (noteList[position].encrypted) {
+                        encryptedDialog(app)
+                    } else {
+                        setIntent(position)
+                    }
                     super.onClick()
                 }
 
                 override fun onLongClick() {
-                    addingDialog(noteList[position].noteId, app, false)
+                    deleteDialog(noteList[position].noteId, app, false)
                     super.onLongClick()
                 }
 
                 override fun onSwipeLeft() {
-                    addingDialog(noteList[position].noteId, app, false)
+                    deleteDialog(noteList[position].noteId, app, false)
                     super.onSwipeLeft()
                 }
 
                 override fun onSwipeRight() {
-                    setIntent(position)
+                    if (noteList[position].encrypted) {
+                        encryptedDialog(app)
+                    } else {
+                        setIntent(position)
+                    }
                     super.onSwipeRight()
                 }
             })

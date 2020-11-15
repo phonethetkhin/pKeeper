@@ -7,9 +7,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -20,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.ptk.pkeeper.vModels.NoteVModel
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * This function is about getting the current system time.
@@ -46,7 +51,7 @@ fun getDateString(
  * This function is about adding the dialog to confirm exit
  *
  */
-fun addingDialog(noteId: Int, app: FragmentActivity, finish: Boolean) {
+fun deleteDialog(noteId: Int, app: FragmentActivity, finish: Boolean) {
     val alertDialog: AlertDialog
     val noteVModel = ViewModelProviders.of(app).get(NoteVModel::class.java)
     val builder: AlertDialog.Builder = AlertDialog.Builder(app)
@@ -64,6 +69,43 @@ fun addingDialog(noteId: Int, app: FragmentActivity, finish: Boolean) {
     alertDialog = builder.create()
     alertDialog.show()
 }
+
+@SuppressLint("UseCompatLoadingForDrawables")
+fun encryptedDialog(app: FragmentActivity) {
+
+    // setup the alert builder
+    val builder = AlertDialog.Builder(app)
+    builder.setTitle("Notice")
+    builder.setMessage("This Note is Encrypted, Do you want to Decrypt this Note?")
+
+    // add the buttons
+    builder.setNegativeButton("Cancel", null)
+    builder.setPositiveButton("Decrypt", null)
+    builder.setNeutralButton("Just Watch", null)
+
+    // create and show the alert dialog
+    val dialog = builder.create()
+    dialog.show()
+
+    val btnPositive: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+    val btnNegative: Button = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+    btnPositive.setTextColor(app.resources.getColor(R.color.holo_green_dark))
+    btnPositive.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+
+    val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+    layoutParams.weight = 10f
+    btnPositive.layoutParams = layoutParams
+    btnNegative.layoutParams = layoutParams
+    val drawable: Drawable = app.resources.getDrawable(R.drawable.ic_lock_lock)
+    drawable.setBounds(
+        (drawable.intrinsicWidth * 0.5).toInt(),
+        0, (drawable.intrinsicWidth * 1.5).toInt(),
+        drawable.intrinsicHeight
+    )
+    btnPositive.setCompoundDrawables(drawable, null, null, null)
+}
+
 /**
  * This function is about setting the fragments.
  *
@@ -85,6 +127,7 @@ fun setFragment(
         transaction.replace(container, fragment).addToBackStack(null).commit()
     }
 }
+
 /**
  * This function is about getting the color state and return color state list
  *
