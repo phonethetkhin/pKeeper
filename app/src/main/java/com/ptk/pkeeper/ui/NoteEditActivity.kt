@@ -184,7 +184,7 @@ class NoteEditActivity : AppCompatActivity() {
         dialogBuilder.setTitle("Enter Note Title")
         dialogBuilder.setMessage("In order to encrypt, you need to specify note title to remember which note you encrypted.")
         dialogBuilder.setPositiveButton("Done",
-            DialogInterface.OnClickListener { dialog, whichButton ->
+            DialogInterface.OnClickListener { _, _ ->
                 noteTitle = edtNoteTitle.text.toString()
                 val intent = Intent(this, VerificationActivity::class.java)
                 intent.putExtra("status",0)
@@ -195,7 +195,7 @@ class NoteEditActivity : AppCompatActivity() {
                 startActivity(intent)
             })
         dialogBuilder.setNegativeButton("Cancel",
-            DialogInterface.OnClickListener { dialog, whichButton ->
+            DialogInterface.OnClickListener { _, _ ->
                 //pass
             })
         val b: AlertDialog = dialogBuilder.create()

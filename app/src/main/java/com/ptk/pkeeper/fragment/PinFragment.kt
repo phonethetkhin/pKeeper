@@ -149,6 +149,7 @@ class PinFragment : Fragment() {
                         hideSoftKeyboard(v, activity!!)
                         showToastShort(activity!!, "Decrypted Successfully !!!")
                         activity!!.finish()
+                        activity!!.startActivity(Intent(activity!!, MainActivity::class.java))
                     } else {
                         hideSoftKeyboard(v, activity!!)
                         showToastShort(activity!!, "Wrong PIN !!!")

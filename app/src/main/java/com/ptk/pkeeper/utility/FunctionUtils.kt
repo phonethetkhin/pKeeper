@@ -1,4 +1,4 @@
-@file:Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+@file:Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "DEPRECATION")
 
 package com.ptk.pkeeper.utility
 
@@ -6,6 +6,7 @@ import android.R
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -21,6 +22,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
+import com.ptk.pkeeper.roomdb.entities.NoteEntity
+import com.ptk.pkeeper.ui.NoteEditActivity
+import com.ptk.pkeeper.ui.VerificationActivity
 import com.ptk.pkeeper.vModels.NoteVModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,7 +75,7 @@ fun deleteDialog(noteId: Int, app: FragmentActivity, finish: Boolean) {
 }
 
 @SuppressLint("UseCompatLoadingForDrawables")
-fun encryptedDialog(app: FragmentActivity) {
+fun encryptedDialog(app: FragmentActivity, noteList: List<NoteEntity>, position: Int) {
 
     // setup the alert builder
     val builder = AlertDialog.Builder(app)
@@ -79,9 +83,21 @@ fun encryptedDialog(app: FragmentActivity) {
     builder.setMessage("This Note is Encrypted, Do you want to Decrypt this Note?")
 
     // add the buttons
-    builder.setNegativeButton("Cancel", null)
-    builder.setPositiveButton("Decrypt", null)
-    builder.setNeutralButton("Just Watch", null)
+    builder.setNegativeButton("Cancel") { _, _ -> }
+    builder.setPositiveButton("Decrypt") { _, _ ->
+        val intent = Intent(app, VerificationActivity::class.java)
+        intent.putExtra("status", 1)
+        intent.putExtra("noteId", noteList[position].noteId)
+        app.finish()
+        app.startActivity(intent)
+    }
+    builder.setNeutralButton("Just Watch") { _, _ ->
+        val i = Intent(app, NoteEditActivity::class.java)
+        val b = Bundle()
+        b.putParcelable("noteModel", noteList[position])
+        i.putExtras(b)
+        app.startActivity(i)
+    }
 
     // create and show the alert dialog
     val dialog = builder.create()

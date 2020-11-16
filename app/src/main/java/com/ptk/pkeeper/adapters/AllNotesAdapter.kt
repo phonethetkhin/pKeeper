@@ -58,7 +58,7 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
 
                 override fun onClick() {
                     if (noteList[position].encrypted) {
-                        encryptedDialog(app)
+                        encryptedDialog(app, noteList, position)
                     } else {
                         setIntent(position)
                     }
@@ -77,7 +77,7 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
 
                 override fun onSwipeRight() {
                     if (noteList[position].encrypted) {
-                        encryptedDialog(app)
+                        encryptedDialog(app, noteList, position)
                     } else {
                         setIntent(position)
                     }
