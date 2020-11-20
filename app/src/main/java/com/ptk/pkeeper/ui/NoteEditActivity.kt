@@ -24,6 +24,7 @@ import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.getDateString
 import com.ptk.pkeeper.utility.getFullDate
+import com.ptk.pkeeper.utility.showToastShort
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_note_edit.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
@@ -67,14 +68,14 @@ class NoteEditActivity : AppCompatActivity() {
         bnvBottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_encrypt -> {
-                    showCustomDialog()
+                    showEncryptMethodSelectionDialog()
                 }
                 R.id.nav_delete -> {
                     deleteDialog(noteId, this, true)
                 }
                 R.id.nav_decrypt -> {
                     val intent = Intent(this, VerificationActivity::class.java)
-                    intent.putExtra("status",1)
+                    intent.putExtra("status", 1)
                     intent.putExtra("noteId", noteId)
                     this.finish()
                     startActivity(intent)
@@ -175,6 +176,28 @@ class NoteEditActivity : AppCompatActivity() {
         txtLastModifiedDate.text = resultText
     }
 
+    private fun showEncryptMethodSelectionDialog() {
+        val encryptMethods = arrayOf("FingerPrint", "PIN", "Pattern")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Select Encryption Method")
+        builder.setItems(encryptMethods) { dialog, which ->
+            when (which) {
+                0 -> {
+                    showToastShort(this, "FingerPrint")
+                }
+                1 -> {
+                    showToastShort(this, "PIN")
+                }
+                2 -> {
+                    showToastShort(this, "Pattern")
+                }
+
+            }
+        }
+        builder.show()
+    }
+
     private fun showCustomDialog() {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -187,7 +210,7 @@ class NoteEditActivity : AppCompatActivity() {
             DialogInterface.OnClickListener { _, _ ->
                 noteTitle = edtNoteTitle.text.toString()
                 val intent = Intent(this, VerificationActivity::class.java)
-                intent.putExtra("status",0)
+                intent.putExtra("status", 0)
                 intent.putExtra("noteId", noteId)
                 intent.putExtra("noteTitle", noteTitle)
                 intent.putExtra("defaultText", letNoteBody.text.toString())
