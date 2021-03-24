@@ -147,12 +147,13 @@ class PinFragment : Fragment() {
                             false
                         )
                         hideSoftKeyboard(v, activity!!)
+                        encryptionVModel.deleteEncryptionById(currentEncryptionEntity.encryptionId)
                         showToastShort(activity!!, "Decrypted Successfully !!!")
                         activity!!.finish()
                         activity!!.startActivity(Intent(activity!!, MainActivity::class.java))
                     } else {
                         hideSoftKeyboard(v, activity!!)
-                        showToastShort(activity!!, "Wrong PIN !!!")
+                        showToastShort(activity!!, "Incorrect PIN !!!")
                     }
                 }
             }

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,7 +18,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
@@ -25,6 +26,7 @@ import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.getDateString
 import com.ptk.pkeeper.utility.getFullDate
 import com.ptk.pkeeper.utility.showToastShort
+import com.ptk.pkeeper.vModels.EncryptionVModel
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_note_edit.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
@@ -32,6 +34,7 @@ import kotlinx.android.synthetic.main.toolbar_centered.*
 
 class NoteEditActivity : AppCompatActivity() {
     lateinit var noteVModel: NoteVModel
+    lateinit var encryptionVModel: EncryptionVModel
     private lateinit var tlbToolbar: Toolbar
     private lateinit var bnvBottomNavigation: BottomNavigationView
     var noteId = 0
@@ -44,13 +47,13 @@ class NoteEditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_note_edit)
         tlbToolbar = findViewById(R.id.tlbToolbar)
         bnvBottomNavigation = findViewById(R.id.bnvBottomNavigation)
-        noteVModel = ViewModelProviders.of(this).get(NoteVModel::class.java)
+        noteVModel = ViewModelProvider(this).get(NoteVModel::class.java)
+        encryptionVModel = ViewModelProvider(this).get(EncryptionVModel::class.java)
         noteModel = intent.getParcelableExtra<NoteEntity>("noteModel")
 
         noteId = noteModel!!.noteId
         noteTitle = noteModel!!.noteTitle
         encryptedStatus = noteModel!!.encrypted
-
         if (encryptedStatus) {
             bnvBottomNavigation.menu.findItem(R.id.nav_encrypt).isVisible = false
             bnvBottomNavigation.menu.findItem(R.id.nav_decrypt).isVisible = true
@@ -74,11 +77,29 @@ class NoteEditActivity : AppCompatActivity() {
                     deleteDialog(noteId, this, true)
                 }
                 R.id.nav_decrypt -> {
-                    val intent = Intent(this, VerificationActivity::class.java)
-                    intent.putExtra("status", 1)
-                    intent.putExtra("noteId", noteId)
-                    this.finish()
-                    startActivity(intent)
+                    val encryptionEntity = encryptionVModel.getEncryptionById(noteId)
+                    Log.d("err","$noteId")
+                    Log.d("err","${encryptionEntity.lockType}")
+
+                    when (encryptionEntity.lockType) {
+                        0 -> {
+                            Log.d("err","pin")
+
+                            val intent = Intent(this, PINActivity::class.java)
+                            intent.putExtra("status", 1)
+                            intent.putExtra("noteId", noteId)
+                            this.finish()
+                            startActivity(intent)
+                        }
+                        1 -> {
+                            Log.d("err","pattern")
+                            val intent = Intent(this, PatternActivity::class.java)
+                            intent.putExtra("status", 1)
+                            intent.putExtra("noteId", noteId)
+                            this.finish()
+                            startActivity(intent)
+                        }
+                    }
                 }
             }
             true
@@ -177,20 +198,20 @@ class NoteEditActivity : AppCompatActivity() {
     }
 
     private fun showEncryptMethodSelectionDialog() {
-        val encryptMethods = arrayOf("FingerPrint", "PIN", "Pattern")
+        val encryptMethods = arrayOf("PIN", "Pattern", "FingerPrint")
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Select Encryption Method")
-        builder.setItems(encryptMethods) { dialog, which ->
+        builder.setItems(encryptMethods) { _, which ->
             when (which) {
                 0 -> {
-                    showToastShort(this, "FingerPrint")
+                    showCustomDialog(PINActivity())
                 }
                 1 -> {
-                    showToastShort(this, "PIN")
+                    showCustomDialog(PatternActivity())
                 }
                 2 -> {
-                    showToastShort(this, "Pattern")
+                    showToastShort(this, "FingerPrint")
                 }
 
             }
@@ -198,10 +219,10 @@ class NoteEditActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun showCustomDialog() {
+    private fun showCustomDialog(activity: AppCompatActivity) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.custom_dialog, null)
+        val dialogView: View = inflater.inflate(R.layout.custom_title_dialog, null)
         dialogBuilder.setView(dialogView)
         val edtNoteTitle = dialogView.findViewById(R.id.edtNoteTitle) as EditText
         dialogBuilder.setTitle("Enter Note Title")
@@ -209,7 +230,7 @@ class NoteEditActivity : AppCompatActivity() {
         dialogBuilder.setPositiveButton("Done",
             DialogInterface.OnClickListener { _, _ ->
                 noteTitle = edtNoteTitle.text.toString()
-                val intent = Intent(this, VerificationActivity::class.java)
+                val intent = Intent(this, activity::class.java)
                 intent.putExtra("status", 0)
                 intent.putExtra("noteId", noteId)
                 intent.putExtra("noteTitle", noteTitle)

@@ -5,9 +5,13 @@
     <string name="done">DONE</string>
     <string name="new_notes">New Notes</string>
     <string name="today">Today</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="set_your_pin">Set Your PIN</string>
     <string name="confirm_your_pin">Confirm Your PIN</string>
     <string name="enter_your_pin">Enter Your PIN</string>
+    <string name="set_pattern">Set Your Pattern</string>
+    <string name="confirm_pattern">Confirm Your Pattern</string>
+    <string name="draw_pattern">Draw Your Pattern</string>
+    <string name="press_again">Press Again to Exit !!!</string>
+
 </resources>

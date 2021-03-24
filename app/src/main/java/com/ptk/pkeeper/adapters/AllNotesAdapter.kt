@@ -13,18 +13,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.ptk.pkeeper.R
-import com.ptk.pkeeper.`interface`.OnSwipeTouchListener
+import com.ptk.pkeeper.interfaces.OnSwipeTouchListener
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.ui.NoteEditActivity
 import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.encryptedDialog
 import com.ptk.pkeeper.utility.getDateString
+import com.ptk.pkeeper.vModels.EncryptionVModel
 
 
 class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>) :
     RecyclerView.Adapter<AllNotesAdapter.ViewHolder>() {
+    private lateinit var encryptionVModel:EncryptionVModel
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var imgLock: ImageView = v.findViewById(R.id.imgLock)
@@ -36,6 +40,7 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_all_notes, parent, false)
+        encryptionVModel = ViewModelProvider(app).get(EncryptionVModel::class.java)
         return ViewHolder(v)
     }
 
@@ -58,7 +63,8 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
 
                 override fun onClick() {
                     if (noteList[position].encrypted) {
-                        encryptedDialog(app, noteList, position)
+                        val encryptionEntity = encryptionVModel.getEncryptionById(noteList[position].noteId)
+                        encryptedDialog(app, noteList, position, encryptionEntity.lockType)
                     } else {
                         setIntent(position)
                     }
@@ -77,7 +83,8 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
 
                 override fun onSwipeRight() {
                     if (noteList[position].encrypted) {
-                        encryptedDialog(app, noteList, position)
+                        val encryptionEntity = encryptionVModel.getEncryptionById(noteList[position].noteId)
+                        encryptedDialog(app, noteList, position, encryptionEntity.lockType)
                     } else {
                         setIntent(position)
                     }

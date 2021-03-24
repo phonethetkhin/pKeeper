@@ -12,6 +12,9 @@ interface EncryptionDao {
     suspend fun insertEncryption(encryptionEntity: EncryptionEntity)
 
     @Query("SELECT * FROM tbl_encryption WHERE note_id=:noteId")
-    fun getNoteById(noteId: Int): EncryptionEntity
+    fun getEncryptionById(noteId: Int): EncryptionEntity
+
+    @Query("DELETE FROM tbl_encryption WHERE encryption_id =:encryptionId")
+    fun deleteEncryptionById(encryptionId:Int)
 
 }

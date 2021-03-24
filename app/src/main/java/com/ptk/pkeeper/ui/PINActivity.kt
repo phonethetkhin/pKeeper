@@ -6,10 +6,10 @@ import com.ptk.pkeeper.R
 import com.ptk.pkeeper.fragment.PinFragment
 import com.ptk.pkeeper.utility.setFragmentByBundle
 
-class VerificationActivity : AppCompatActivity() {
+class PINActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_verification)
+        setContentView(R.layout.activity_pin)
 
         val status = intent!!.getIntExtra("status", 0)
         if (status == 0) {

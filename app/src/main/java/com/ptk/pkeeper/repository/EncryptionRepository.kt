@@ -9,6 +9,10 @@ class EncryptionRepository(private val encryptionDao: EncryptionDao) {
     }
 
     fun getEncryptionById(noteId: Int): EncryptionEntity {
-        return encryptionDao.getNoteById(noteId)
+        return encryptionDao.getEncryptionById(noteId)
+    }
+
+    fun deleteEncryptionById(encryptionId: Int) {
+        encryptionDao.deleteEncryptionById(encryptionId)
     }
 }

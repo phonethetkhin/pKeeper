@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -17,6 +18,8 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.marginEnd
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -24,7 +27,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProviders
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.ui.NoteEditActivity
-import com.ptk.pkeeper.ui.VerificationActivity
+import com.ptk.pkeeper.ui.PINActivity
+import com.ptk.pkeeper.ui.PatternActivity
 import com.ptk.pkeeper.vModels.NoteVModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -75,7 +79,12 @@ fun deleteDialog(noteId: Int, app: FragmentActivity, finish: Boolean) {
 }
 
 @SuppressLint("UseCompatLoadingForDrawables")
-fun encryptedDialog(app: FragmentActivity, noteList: List<NoteEntity>, position: Int) {
+fun encryptedDialog(
+    app: FragmentActivity,
+    noteList: List<NoteEntity>,
+    position: Int,
+    lockType: Int
+) {
 
     // setup the alert builder
     val builder = AlertDialog.Builder(app)
@@ -85,11 +94,23 @@ fun encryptedDialog(app: FragmentActivity, noteList: List<NoteEntity>, position:
     // add the buttons
     builder.setNegativeButton("Cancel") { _, _ -> }
     builder.setPositiveButton("Decrypt") { _, _ ->
-        val intent = Intent(app, VerificationActivity::class.java)
-        intent.putExtra("status", 1)
-        intent.putExtra("noteId", noteList[position].noteId)
-        app.finish()
-        app.startActivity(intent)
+        when (lockType) {
+            0 -> {
+                Log.d("err", "pin")
+
+                val intent = Intent(app, PINActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteList[position].noteId)
+                app.startActivity(intent)
+            }
+            1 -> {
+                Log.d("err", "pattern")
+                val intent = Intent(app, PatternActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteList[position].noteId)
+                app.startActivity(intent)
+            }
+        }
     }
     builder.setNeutralButton("Just Watch") { _, _ ->
         val i = Intent(app, NoteEditActivity::class.java)
@@ -120,6 +141,7 @@ fun encryptedDialog(app: FragmentActivity, noteList: List<NoteEntity>, position:
         drawable.intrinsicHeight
     )
     btnPositive.setCompoundDrawables(drawable, null, null, null)
+    btnPositive.compoundDrawablePadding = 30
 }
 
 /**
