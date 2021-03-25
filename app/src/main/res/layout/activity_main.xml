@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/noteBackground"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
@@ -14,28 +15,51 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/csl1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="4dp"
+            android:layout_margin="@dimen/_4sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
     <SearchView
         android:id="@+id/scvSearchNotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
-
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:paddingStart="-15dp"
+        android:paddingEnd="0dp"
+        android:queryBackground="@android:color/transparent"
+        android:queryHint="Search" />
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvAllNotes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
         android:background="@color/noteBackground"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scvSearchNotes"
+        app:layout_constraintTop_toBottomOf="@+id/csl1"
         app:reverseLayout="true"
-        app:stackFromEnd="true"
-        />
+        app:stackFromEnd="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

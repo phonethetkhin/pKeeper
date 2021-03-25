@@ -5,11 +5,14 @@ package com.ptk.pkeeper.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
@@ -20,19 +23,28 @@ import com.ptk.pkeeper.utility.showToastShort
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var tlbToolbar: Toolbar
     private lateinit var noteVModel: NoteVModel
     private var isSecond = false
+    lateinit var scvSearchNotes: SearchView
+    private lateinit var allNoteAdapter:AllNotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         tlbToolbar = findViewById(R.id.tlbToolbar)
         noteVModel = ViewModelProviders.of(this).get(NoteVModel::class.java)
-        setToolbar()
-        setAdapter()
+        scvSearchNotes = findViewById(R.id.scvSearchNotes)
+        CoroutineScope(Dispatchers.Main).launch {
+            setToolbar()
+            setAdapter()
+            searchViewFunction()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -54,12 +66,27 @@ class MainActivity : AppCompatActivity() {
         txtToolbarTitle.text = getString(R.string.all_notes)
     }
 
+    private fun searchViewFunction()
+    {
+        scvSearchNotes.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                allNoteAdapter.filter.filter(newText)
+                return false
+            }
+
+        })
+    }
+
     private fun setAdapter() {
         rcvAllNotes.setHasFixedSize(true)
         noteVModel.getAllNotes()!!.observe(this, {
             val sortedList = it.sortedWith(compareBy(NoteEntity::notedDate))
-            val adapter = AllNotesAdapter(this, sortedList)
-            rcvAllNotes.adapter = adapter
+            allNoteAdapter = AllNotesAdapter(this, sortedList.toCollection(ArrayList()))
+            rcvAllNotes.adapter = allNoteAdapter
         })
     }
 

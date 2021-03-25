@@ -37,13 +37,9 @@ class PinFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_pin, container, false)
 
-        v.pnvVerification.requestFocus()
         noteVModel = ViewModelProviders.of(activity!!).get(NoteVModel::class.java)
         encryptionVModel = ViewModelProviders.of(activity!!).get(EncryptionVModel::class.java)
         val status = arguments!!.getInt("status", 0)
-
-        //auto show soft keyboard when setting pin fragment
-        showSoftKeyboard(v, activity!!)
 
         //get color state list and set color state to pinview
         val colorStateList = getColorStateList(
@@ -106,12 +102,18 @@ class PinFragment : Fragment() {
                             activity!!.finishAffinity()
                         } else {
                             hideSoftKeyboard(v, activity!!)
+                            v.pnvVerification.setLineColor(resources.getColor(R.color.colorWrongLine))
                             showToastShort(activity!!, "PIN Don't Match!!!")
 
                         }
                     }
+                } else {
+                    val colorStateList = getColorStateList(
+                        resources.getColor(R.color.colorPrimary),
+                        resources.getColor(R.color.green)
+                    )
+                    v.pnvVerification.setLineColor(colorStateList)
                 }
-
             }
         })
     }
@@ -153,8 +155,17 @@ class PinFragment : Fragment() {
                         activity!!.startActivity(Intent(activity!!, MainActivity::class.java))
                     } else {
                         hideSoftKeyboard(v, activity!!)
+                        v.pnvVerification.setLineColor(resources.getColor(R.color.colorWrongLine))
                         showToastShort(activity!!, "Incorrect PIN !!!")
                     }
+                }
+                else
+                {
+                    val colorStateList = getColorStateList(
+                        resources.getColor(R.color.colorPrimary),
+                        resources.getColor(R.color.green)
+                    )
+                    v.pnvVerification.setLineColor(colorStateList)
                 }
             }
 

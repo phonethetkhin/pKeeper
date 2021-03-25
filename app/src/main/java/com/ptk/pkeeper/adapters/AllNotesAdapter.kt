@@ -1,6 +1,5 @@
 @file:SuppressLint("ClickableViewAccessibility")
-@file:Suppress("DEPRECATION")
-
+@file:Suppress("DEPRECATION", "UNCHECKED_CAST")
 package com.ptk.pkeeper.adapters
 
 import android.annotation.SuppressLint
@@ -9,11 +8,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.ptk.pkeeper.R
@@ -24,10 +24,15 @@ import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.encryptedDialog
 import com.ptk.pkeeper.utility.getDateString
 import com.ptk.pkeeper.vModels.EncryptionVModel
+import java.util.*
+import kotlin.collections.ArrayList
 
 
-class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>) :
-    RecyclerView.Adapter<AllNotesAdapter.ViewHolder>() {
+class AllNotesAdapter(val app: FragmentActivity, var noteList: ArrayList<NoteEntity>) :
+    RecyclerView.Adapter<AllNotesAdapter.ViewHolder>(), Filterable {
+    private val valueFilter = ValueFilter()
+    private val filterNoteList = ArrayList(noteList)
+
     private lateinit var encryptionVModel:EncryptionVModel
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -103,5 +108,44 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: List<NoteEntity>)
         b.putParcelable("noteModel", noteList[position])
         i.putExtras(b)
         app.startActivity(i)
+    }
+    inner class ValueFilter : Filter() {
+        override fun performFiltering(constraint: CharSequence): FilterResults {
+            val results = FilterResults()
+            val filterList: MutableList<NoteEntity> = ArrayList()
+            if (constraint.isNotEmpty()) {
+                for (i in filterNoteList.indices) {
+                    if(filterNoteList[i].encrypted && filterNoteList[i].noteTitle!=null)
+                    {
+                        if (filterNoteList[i].noteTitle!!.toUpperCase(Locale.ROOT).contains(constraint.toString().toUpperCase(
+                                Locale.ROOT))) {
+                            filterList.add(filterNoteList[i])
+                        }
+                    }
+                    else{
+                        if (filterNoteList[i].noteBody.toUpperCase(Locale.ROOT).contains(constraint.toString().toUpperCase(
+                                Locale.ROOT))) {
+                            filterList.add(filterNoteList[i])
+                        }
+                    }
+
+                }
+                results.count = filterList.size
+                results.values = filterList
+            } else {
+                results.count = filterNoteList.size
+                results.values = filterNoteList
+            }
+            return results
+        }
+
+        override fun publishResults(constraint: CharSequence, results: FilterResults) {
+            noteList = results.values as ArrayList<NoteEntity>
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return valueFilter
     }
 }

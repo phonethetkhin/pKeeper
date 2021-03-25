@@ -27,18 +27,18 @@
         android:focusable="true"
         android:padding="@dimen/_8sdp"
         android:textSize="@dimen/_20sdp"
-        app:cursorWidth="2dp"
+        app:cursorWidth="1dp"
         app:hideLineWhenFilled="false"
         app:itemCount="4"
         app:itemHeight="50dp"
-        app:itemRadius="30dp"
+        app:itemRadius="20dp"
         app:itemSpacing="30dp"
         app:itemWidth="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lineWidth="2dp"
+        app:lineWidth="1dp"
         app:viewType="rectangle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
