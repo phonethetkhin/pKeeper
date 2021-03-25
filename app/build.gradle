@@ -23,6 +23,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
@@ -62,6 +65,10 @@ dependencies {
 
     //Debug
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+
+    //swipe layout
+    implementation 'com.github.zerobranch:SwipeLayout:1.3.1'
+
 
 
 

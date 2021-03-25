@@ -1,70 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zerobranch.layout.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cslNote"
+    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:draggedItem="@id/cslNote"
+    app:rightItem="@id/imgDelete"
+    app:swipeDirection="left">
 
     <ImageView
-        android:id="@+id/imgLock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:src="@drawable/ic_baseline_lock_24"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/imgDelete"
+        android:layout_width="@dimen/_50sdp"
+        android:contentDescription="@string/delete_button"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/colorWrongLine"
+        android:src="@drawable/ic_delete" />
 
-    <TextView
-        android:id="@+id/txtNoteInitial"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:ellipsize="end"
-        android:maxWidth="100dp"
-        android:maxLength="100"
-        android:minWidth="100dp"
-        android:singleLine="true"
-        android:textColor="#000000"
-        android:textSize="@dimen/_15sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtModifiedDate"
-        app:layout_constraintStart_toEndOf="@+id/imgLock"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtModifiedDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Yesterday"
-        android:textColor="#706F6F"
-        android:textSize="@dimen/_15sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/txtNoteInitial"
-        app:layout_constraintEnd_toStartOf="@+id/imgForwardArrow"
-        app:layout_constraintTop_toTopOf="@+id/txtNoteInitial" />
-
-    <ImageView
-        android:id="@+id/imgForwardArrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_forward_arrow"
-        app:layout_constraintBottom_toBottomOf="@+id/txtModifiedDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtModifiedDate" />
-
-    <View
-        android:id="@+id/divider"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cslNote"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNoteInitial" />
+        android:layout_height="wrap_content"
+        android:background="@color/noteBackground">
+
+        <ImageView
+            android:id="@+id/imgLock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_baseline_lock_24"
+            android:visibility="gone"
+            android:contentDescription="@string/lock_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtNoteInitial"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxWidth="100dp"
+            android:maxLength="100"
+            android:minWidth="100dp"
+            android:singleLine="true"
+            android:textColor="#000000"
+            android:textSize="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/txtModifiedDate"
+            app:layout_constraintStart_toEndOf="@+id/imgLock"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtModifiedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/yesterday"
+            android:textColor="#706F6F"
+            android:textSize="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtNoteInitial"
+            app:layout_constraintEnd_toStartOf="@+id/imgForwardArrow"
+            app:layout_constraintTop_toTopOf="@+id/txtNoteInitial" />
+
+        <ImageView
+            android:id="@+id/imgForwardArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/forward_arrow_image"
+            android:src="@drawable/ic_forward_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/txtModifiedDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtModifiedDate" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtNoteInitial" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.zerobranch.layout.SwipeLayout>

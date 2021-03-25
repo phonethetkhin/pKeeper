@@ -13,5 +13,10 @@
     <string name="confirm_pattern">Confirm Your Pattern</string>
     <string name="draw_pattern">Draw Your Pattern</string>
     <string name="press_again">Press Again to Exit !!!</string>
+    <string name="delete_button">Delete Button</string>
+    <string name="lock_image">Lock Image</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="forward_arrow_image">Forward Arrow Image</string>
+
 
 </resources>

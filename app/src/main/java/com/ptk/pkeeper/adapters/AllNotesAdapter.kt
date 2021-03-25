@@ -1,8 +1,13 @@
 @file:SuppressLint("ClickableViewAccessibility")
 @file:Suppress("DEPRECATION", "UNCHECKED_CAST")
+
 package com.ptk.pkeeper.adapters
 
+import android.R.attr.label
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +15,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.ptk.pkeeper.R
-import com.ptk.pkeeper.interfaces.OnSwipeTouchListener
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.ui.NoteEditActivity
 import com.ptk.pkeeper.utility.deleteDialog
 import com.ptk.pkeeper.utility.encryptedDialog
 import com.ptk.pkeeper.utility.getDateString
 import com.ptk.pkeeper.vModels.EncryptionVModel
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.list_item_all_notes.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -33,14 +37,10 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: ArrayList<NoteEnt
     private val valueFilter = ValueFilter()
     private val filterNoteList = ArrayList(noteList)
 
-    private lateinit var encryptionVModel:EncryptionVModel
+    private lateinit var encryptionVModel: EncryptionVModel
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var imgLock: ImageView = v.findViewById(R.id.imgLock)
-        var txtNoteInitial: TextView = v.findViewById(R.id.txtNoteInitial)
-        var txtModifiedDate: TextView = v.findViewById(R.id.txtModifiedDate)
-        var cslNote: ConstraintLayout = v.findViewById(R.id.cslNote)
-    }
+    class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
+        LayoutContainer
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v =
@@ -63,45 +63,33 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: ArrayList<NoteEnt
         val date = getDateString(noteList[position].notedDate, "yyyy-MM-dd HH:mm:ss", "dd-MM")
         holder.txtModifiedDate.text = date
 
-        holder.cslNote.setOnTouchListener(
-            object : OnSwipeTouchListener(app) {
+        holder.cslNote.setOnClickListener {
+            if (noteList[position].encrypted) {
+                val encryptionEntity = encryptionVModel.getEncryptionById(noteList[position].noteId)
+                encryptedDialog(app, noteList, position, encryptionEntity.lockType)
+            } else {
+                setIntent(position)
+            }
+        }
 
-                override fun onClick() {
-                    if (noteList[position].encrypted) {
-                        val encryptionEntity = encryptionVModel.getEncryptionById(noteList[position].noteId)
-                        encryptedDialog(app, noteList, position, encryptionEntity.lockType)
-                    } else {
-                        setIntent(position)
-                    }
-                    super.onClick()
-                }
+        holder.cslNote.setOnLongClickListener {
+            app.copyToClipboard(noteList[position].noteBody)
+            return@setOnLongClickListener true
+        }
 
-                override fun onLongClick() {
-                    deleteDialog(noteList[position].noteId, app, false)
-                    super.onLongClick()
-                }
-
-                override fun onSwipeLeft() {
-                    deleteDialog(noteList[position].noteId, app, false)
-                    super.onSwipeLeft()
-                }
-
-                override fun onSwipeRight() {
-                    if (noteList[position].encrypted) {
-                        val encryptionEntity = encryptionVModel.getEncryptionById(noteList[position].noteId)
-                        encryptedDialog(app, noteList, position, encryptionEntity.lockType)
-                    } else {
-                        setIntent(position)
-                    }
-                    super.onSwipeRight()
-                }
-            })
+        holder.imgDelete.setOnClickListener {
+            deleteDialog(noteList[position].noteId, app, false)
+        }
     }
 
     override fun getItemCount(): Int {
         return noteList.size
     }
-
+    fun Context.copyToClipboard(text: CharSequence){
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label",text)
+        clipboard.setPrimaryClip(clip)
+    }
     private fun setIntent(position: Int) {
         val i = Intent(app, NoteEditActivity::class.java)
         val b = Bundle()
@@ -109,22 +97,29 @@ class AllNotesAdapter(val app: FragmentActivity, var noteList: ArrayList<NoteEnt
         i.putExtras(b)
         app.startActivity(i)
     }
+
     inner class ValueFilter : Filter() {
         override fun performFiltering(constraint: CharSequence): FilterResults {
             val results = FilterResults()
             val filterList: MutableList<NoteEntity> = ArrayList()
             if (constraint.isNotEmpty()) {
                 for (i in filterNoteList.indices) {
-                    if(filterNoteList[i].encrypted && filterNoteList[i].noteTitle!=null)
-                    {
-                        if (filterNoteList[i].noteTitle!!.toUpperCase(Locale.ROOT).contains(constraint.toString().toUpperCase(
-                                Locale.ROOT))) {
+                    if (filterNoteList[i].encrypted && filterNoteList[i].noteTitle != null) {
+                        if (filterNoteList[i].noteTitle!!.toUpperCase(Locale.ROOT).contains(
+                                constraint.toString().toUpperCase(
+                                    Locale.ROOT
+                                )
+                            )
+                        ) {
                             filterList.add(filterNoteList[i])
                         }
-                    }
-                    else{
-                        if (filterNoteList[i].noteBody.toUpperCase(Locale.ROOT).contains(constraint.toString().toUpperCase(
-                                Locale.ROOT))) {
+                    } else {
+                        if (filterNoteList[i].noteBody.toUpperCase(Locale.ROOT).contains(
+                                constraint.toString().toUpperCase(
+                                    Locale.ROOT
+                                )
+                            )
+                        ) {
                             filterList.add(filterNoteList[i])
                         }
                     }
