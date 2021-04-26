@@ -5,13 +5,15 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.ptk.pkeeper.repository.NoteRepository
-import com.ptk.pkeeper.roomdb.NoteDB
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import kotlinx.coroutines.launch
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
-class NoteVModel(application: Application) : AndroidViewModel(application) {
-    private val noteDao = NoteDB.getNoteDB(application)!!.NoteDao()
-    private val noteRepo = NoteRepository(noteDao)
+class NoteVModel(application: Application) : AndroidViewModel(application), DIAware {
+    override val di by di(application)
+    private val noteRepo: NoteRepository by instance()
 
     fun insertNote(noteEntity: NoteEntity) = viewModelScope.launch {
         noteRepo.insertNote(noteEntity)

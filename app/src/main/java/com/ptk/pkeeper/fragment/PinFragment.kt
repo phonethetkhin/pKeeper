@@ -2,6 +2,7 @@
 
 package com.ptk.pkeeper.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -12,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.EncryptionEntity
 import com.ptk.pkeeper.ui.MainActivity
@@ -20,25 +20,30 @@ import com.ptk.pkeeper.utility.*
 import com.ptk.pkeeper.vModels.EncryptionVModel
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.fragment_pin.view.*
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
-class PinFragment : Fragment() {
+class PinFragment : Fragment(), DIAware {
+    override lateinit var di: DI
     var firstPin = ""
     var secondPin = ""
     var noteId = 0
     var noteTitle = ""
     var defaultText = ""
-    private lateinit var noteVModel: NoteVModel
-    private lateinit var encryptionVModel: EncryptionVModel
+    private val noteVModel: NoteVModel by instance()
+    private val encryptionVModel: EncryptionVModel by instance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        di = (activity as DIAware).di
+
         val v = inflater.inflate(R.layout.fragment_pin, container, false)
 
-        noteVModel = ViewModelProviders.of(activity!!).get(NoteVModel::class.java)
-        encryptionVModel = ViewModelProviders.of(activity!!).get(EncryptionVModel::class.java)
         val status = arguments!!.getInt("status", 0)
 
         //get color state list and set color state to pinview
@@ -158,9 +163,7 @@ class PinFragment : Fragment() {
                         v.pnvVerification.setLineColor(resources.getColor(R.color.colorWrongLine))
                         showToastShort(activity!!, "Incorrect PIN !!!")
                     }
-                }
-                else
-                {
+                } else {
                     val colorStateList = getColorStateList(
                         resources.getColor(R.color.colorPrimary),
                         resources.getColor(R.color.green)

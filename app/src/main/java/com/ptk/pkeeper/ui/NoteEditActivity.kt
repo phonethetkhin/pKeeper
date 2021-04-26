@@ -18,25 +18,27 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
-import com.ptk.pkeeper.utility.deleteDialog
-import com.ptk.pkeeper.utility.getDateString
-import com.ptk.pkeeper.utility.getFullDate
-import com.ptk.pkeeper.utility.showToastShort
+import com.ptk.pkeeper.utility.*
 import com.ptk.pkeeper.vModels.EncryptionVModel
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_note_edit.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
 
-class NoteEditActivity : AppCompatActivity() {
-    lateinit var noteVModel: NoteVModel
-    lateinit var encryptionVModel: EncryptionVModel
+class NoteEditActivity : AppCompatActivity(), DIAware {
+    override val di by di()
+    private val noteVModel: NoteVModel by instance()
+    private val patternActivity: PatternActivity by instance()
+    private val encryptionVModel: EncryptionVModel by instance()
     private lateinit var tlbToolbar: Toolbar
     private lateinit var bnvBottomNavigation: BottomNavigationView
+
     var noteId = 0
     var noteTitle: String? = null
     var encryptedStatus = false
@@ -47,13 +49,13 @@ class NoteEditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_note_edit)
         tlbToolbar = findViewById(R.id.tlbToolbar)
         bnvBottomNavigation = findViewById(R.id.bnvBottomNavigation)
-        noteVModel = ViewModelProvider(this).get(NoteVModel::class.java)
-        encryptionVModel = ViewModelProvider(this).get(EncryptionVModel::class.java)
         noteModel = intent.getParcelableExtra<NoteEntity>("noteModel")
+
 
         noteId = noteModel!!.noteId
         noteTitle = noteModel!!.noteTitle
         encryptedStatus = noteModel!!.encrypted
+        val encryptionEntity = encryptionVModel.getEncryptionById(noteId)
         if (encryptedStatus) {
             bnvBottomNavigation.menu.findItem(R.id.nav_encrypt).isVisible = false
             bnvBottomNavigation.menu.findItem(R.id.nav_decrypt).isVisible = true
@@ -74,16 +76,25 @@ class NoteEditActivity : AppCompatActivity() {
                     showEncryptMethodSelectionDialog()
                 }
                 R.id.nav_delete -> {
-                    deleteDialog(noteId, this, true)
+               // patternActivity.hiFunction()
+                    if (noteModel!!.encrypted) {
+                        encryptedDialogForNoteEdit(
+                            this@NoteEditActivity,
+                            encryptionEntity.lockType,
+                            noteId,
+                            "You can't delete Encrypted notes. In order to delete, you must first Decrypt this Note !!!"
+                        )
+                    } else {
+                        deleteDialog(noteId, this@NoteEditActivity, true)
+                    }
                 }
                 R.id.nav_decrypt -> {
-                    val encryptionEntity = encryptionVModel.getEncryptionById(noteId)
-                    Log.d("err","$noteId")
-                    Log.d("err","${encryptionEntity.lockType}")
+                    Log.d("err", "$noteId")
+                    Log.d("err", "${encryptionEntity.lockType}")
 
                     when (encryptionEntity.lockType) {
                         0 -> {
-                            Log.d("err","pin")
+                            Log.d("err", "pin")
 
                             val intent = Intent(this, PINActivity::class.java)
                             intent.putExtra("status", 1)
@@ -92,7 +103,7 @@ class NoteEditActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                         1 -> {
-                            Log.d("err","pattern")
+                            Log.d("err", "pattern")
                             val intent = Intent(this, PatternActivity::class.java)
                             intent.putExtra("status", 1)
                             intent.putExtra("noteId", noteId)

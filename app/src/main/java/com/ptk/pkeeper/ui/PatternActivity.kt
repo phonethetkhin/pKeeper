@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
@@ -17,23 +16,25 @@ import com.ptk.pkeeper.vModels.EncryptionVModel
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_pattern.*
 import kotlinx.coroutines.*
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
 
-class PatternActivity : AppCompatActivity() {
+class PatternActivity : AppCompatActivity(), DIAware {
+    override val di by di()
     var firstPattern = ""
     var secondPattern = ""
     var noteId = 0
     var noteTitle = ""
     var defaultText = ""
-    private lateinit var noteVModel: NoteVModel
-    private lateinit var encryptionVModel: EncryptionVModel
+    private val noteVModel: NoteVModel by instance()
+    private val encryptionVModel: EncryptionVModel by instance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pattern)
 
         val status = intent!!.getIntExtra("status", 0)
-        noteVModel = ViewModelProvider(this).get(NoteVModel::class.java)
-        encryptionVModel = ViewModelProvider(this).get(EncryptionVModel::class.java)
         if (status == 0) {
             noteId = intent!!.getIntExtra("noteId", 0)
             noteTitle = intent!!.getStringExtra("noteTitle")!!
@@ -129,5 +130,9 @@ class PatternActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+    fun hiFunction()
+    {
+        showToastShort(this@PatternActivity,"Hi")
     }
 }

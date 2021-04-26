@@ -5,6 +5,8 @@ package com.ptk.pkeeper.utility
 import android.R
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -18,8 +20,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.marginEnd
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -83,13 +83,14 @@ fun encryptedDialog(
     app: FragmentActivity,
     noteList: List<NoteEntity>,
     position: Int,
-    lockType: Int
+    lockType: Int,
+    message: String
 ) {
 
     // setup the alert builder
     val builder = AlertDialog.Builder(app)
     builder.setTitle("Notice")
-    builder.setMessage("This Note is Encrypted, Do you want to Decrypt this Note?")
+    builder.setMessage(message)
 
     // add the buttons
     builder.setNegativeButton("Cancel") { _, _ -> }
@@ -137,6 +138,135 @@ fun encryptedDialog(
     val drawable: Drawable = app.resources.getDrawable(R.drawable.ic_lock_lock)
     drawable.setBounds(
         (drawable.intrinsicWidth * 0.5).toInt(),
+        0, (drawable.intrinsicWidth * 1.5).toInt(),
+        drawable.intrinsicHeight
+    )
+    btnPositive.setCompoundDrawables(drawable, null, null, null)
+    btnPositive.compoundDrawablePadding = 30
+}
+
+@SuppressLint("UseCompatLoadingForDrawables")
+fun encryptedDialogForCopy(
+    app: FragmentActivity,
+    noteList: List<NoteEntity>,
+    position: Int,
+    lockType: Int,
+    message: String
+) {
+
+    // setup the alert builder
+    val builder = AlertDialog.Builder(app)
+    builder.setTitle("Notice")
+    builder.setMessage(message)
+
+    // add the buttons
+    builder.setNegativeButton("Cancel") { _, _ -> }
+    builder.setPositiveButton("Decrypt") { _, _ ->
+        when (lockType) {
+            0 -> {
+                Log.d("err", "pin")
+
+                val intent = Intent(app, PINActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteList[position].noteId)
+                app.startActivity(intent)
+            }
+            1 -> {
+                Log.d("err", "pattern")
+                val intent = Intent(app, PatternActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteList[position].noteId)
+                app.startActivity(intent)
+            }
+        }
+    }
+    builder.setNeutralButton("Just Copy") { _, _ ->
+        showToastShort(app, "Copied to Clipboard")
+        app.copyToClipboard(noteList[position].noteBody)
+    }
+
+    // create and show the alert dialog
+    val dialog = builder.create()
+    dialog.show()
+
+    val btnPositive: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+    val btnNegative: Button = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+    btnPositive.setTextColor(app.resources.getColor(R.color.holo_green_dark))
+    btnPositive.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+
+    val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+    layoutParams.weight = 10f
+    btnPositive.layoutParams = layoutParams
+    btnNegative.layoutParams = layoutParams
+    val drawable: Drawable = app.resources.getDrawable(R.drawable.ic_lock_lock)
+    drawable.setBounds(
+        (drawable.intrinsicWidth * 0.5).toInt(),
+        0, (drawable.intrinsicWidth * 1.5).toInt(),
+        drawable.intrinsicHeight
+    )
+    btnPositive.setCompoundDrawables(drawable, null, null, null)
+    btnPositive.compoundDrawablePadding = 30
+}
+
+fun Context.copyToClipboard(text: CharSequence) {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("label", text)
+    clipboard.setPrimaryClip(clip)
+}
+
+@SuppressLint("UseCompatLoadingForDrawables")
+fun encryptedDialogForNoteEdit(
+    app: FragmentActivity,
+    lockType: Int,
+    noteId: Int,
+    message: String
+) {
+
+    // setup the alert builder
+    val builder = AlertDialog.Builder(app)
+    builder.setTitle("Notice")
+    builder.setMessage(message)
+
+    // add the buttons
+    builder.setNegativeButton("Cancel") { _, _ -> }
+    builder.setPositiveButton("Decrypt") { _, _ ->
+        when (lockType) {
+            0 -> {
+                Log.d("err", "pin")
+
+                val intent = Intent(app, PINActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteId)
+                app.startActivity(intent)
+            }
+            1 -> {
+                Log.d("err", "pattern")
+                val intent = Intent(app, PatternActivity::class.java)
+                intent.putExtra("status", 1)
+                intent.putExtra("noteId", noteId)
+                app.startActivity(intent)
+            }
+        }
+    }
+
+    // create and show the alert dialog
+    val dialog = builder.create()
+    dialog.show()
+
+    val btnPositive: Button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+    val btnNegative: Button = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+    btnPositive.setTextColor(app.resources.getColor(R.color.holo_green_dark))
+    btnPositive.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+
+    val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+    layoutParams.weight = 10f
+    btnPositive.layoutParams = layoutParams
+    btnNegative.layoutParams = layoutParams
+    val drawable: Drawable = app.resources.getDrawable(R.drawable.ic_lock_lock)
+    drawable.setBounds(
+        (drawable.intrinsicWidth * 1.5).toInt(),
         0, (drawable.intrinsicWidth * 1.5).toInt(),
         drawable.intrinsicHeight
     )

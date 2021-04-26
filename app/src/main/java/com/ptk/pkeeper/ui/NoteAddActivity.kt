@@ -11,23 +11,25 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.utility.getFullDate
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.activity_note_add.*
 import kotlinx.android.synthetic.main.toolbar_centered.*
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
-class NoteAddActivity : AppCompatActivity() {
-    lateinit var noteVModel: NoteVModel
+class NoteAddActivity : AppCompatActivity(), DIAware {
+    override val di by di()
+    private val noteVModel: NoteVModel by instance()
     private lateinit var tlbToolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note_add)
         tlbToolbar = findViewById(R.id.tlbToolbar)
-        noteVModel = ViewModelProviders.of(this).get(NoteVModel::class.java)
 
         txtLastModifiedDate.text = getString(R.string.today)
 
@@ -56,7 +58,7 @@ class NoteAddActivity : AppCompatActivity() {
         if (TextUtils.isEmpty(noteBody)) {
             finish()
         } else {
-            val noteEntity = NoteEntity(0,null, noteBody, getFullDate(), null,false)
+            val noteEntity = NoteEntity(0, null, noteBody, getFullDate(), null, false)
             noteVModel.insertNote(noteEntity)
             finish()
         }

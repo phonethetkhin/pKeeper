@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.fragment.PinFragment
 import com.ptk.pkeeper.utility.setFragmentByBundle
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
 class PINActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

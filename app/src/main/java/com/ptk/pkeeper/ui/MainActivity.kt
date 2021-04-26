@@ -5,17 +5,14 @@ package com.ptk.pkeeper.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.adapters.AllNotesAdapter
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
@@ -26,19 +23,22 @@ import kotlinx.android.synthetic.main.toolbar_centered.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.kodein.di.DIAware
+import org.kodein.di.android.di
+import org.kodein.di.instance
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DIAware {
+    override val di by di()
     private lateinit var tlbToolbar: Toolbar
-    private lateinit var noteVModel: NoteVModel
+    private val noteVModel: NoteVModel by instance()
     private var isSecond = false
     lateinit var scvSearchNotes: SearchView
-    private lateinit var allNoteAdapter:AllNotesAdapter
+    private lateinit var allNoteAdapter: AllNotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         tlbToolbar = findViewById(R.id.tlbToolbar)
-        noteVModel = ViewModelProviders.of(this).get(NoteVModel::class.java)
         scvSearchNotes = findViewById(R.id.scvSearchNotes)
         CoroutineScope(Dispatchers.Main).launch {
             setToolbar()
@@ -66,8 +66,7 @@ class MainActivity : AppCompatActivity() {
         txtToolbarTitle.text = getString(R.string.all_notes)
     }
 
-    private fun searchViewFunction()
-    {
+    private fun searchViewFunction() {
         scvSearchNotes.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
