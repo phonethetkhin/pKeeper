@@ -2,7 +2,6 @@
 
 package com.ptk.pkeeper.fragment
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -15,14 +14,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ptk.pkeeper.R
 import com.ptk.pkeeper.roomdb.entities.EncryptionEntity
-import com.ptk.pkeeper.ui.MainActivity
+import com.ptk.pkeeper.ui.HomeActivity
 import com.ptk.pkeeper.utility.*
 import com.ptk.pkeeper.vModels.EncryptionVModel
 import com.ptk.pkeeper.vModels.NoteVModel
 import kotlinx.android.synthetic.main.fragment_pin.view.*
 import org.kodein.di.DI
 import org.kodein.di.DIAware
-import org.kodein.di.android.di
 import org.kodein.di.instance
 
 class PinFragment : Fragment(), DIAware {
@@ -39,10 +37,10 @@ class PinFragment : Fragment(), DIAware {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        di = (activity as DIAware).di
-
         val v = inflater.inflate(R.layout.fragment_pin, container, false)
+        // Inflate the layout for this fragment
+        di = (activity!!.applicationContext as DIAware).di
+
 
         val status = arguments!!.getInt("status", 0)
 
@@ -103,7 +101,7 @@ class PinFragment : Fragment(), DIAware {
                                 getFullDate(),
                                 true
                             )
-                            startActivity(Intent(activity!!, MainActivity::class.java))
+                            startActivity(Intent(activity!!, HomeActivity::class.java))
                             activity!!.finishAffinity()
                         } else {
                             hideSoftKeyboard(v, activity!!)
@@ -157,7 +155,7 @@ class PinFragment : Fragment(), DIAware {
                         encryptionVModel.deleteEncryptionById(currentEncryptionEntity.encryptionId)
                         showToastShort(activity!!, "Decrypted Successfully !!!")
                         activity!!.finish()
-                        activity!!.startActivity(Intent(activity!!, MainActivity::class.java))
+                        activity!!.startActivity(Intent(activity!!, HomeActivity::class.java))
                     } else {
                         hideSoftKeyboard(v, activity!!)
                         v.pnvVerification.setLineColor(resources.getColor(R.color.colorWrongLine))

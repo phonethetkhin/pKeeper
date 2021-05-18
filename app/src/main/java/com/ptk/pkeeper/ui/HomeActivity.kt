@@ -13,7 +13,11 @@ import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.ptk.pkeeper.R
+import com.ptk.pkeeper.ToolbarMenuDialogFragment
 import com.ptk.pkeeper.adapters.AllNotesAdapter
 import com.ptk.pkeeper.roomdb.entities.NoteEntity
 import com.ptk.pkeeper.utility.showToastShort
@@ -27,18 +31,22 @@ import org.kodein.di.DIAware
 import org.kodein.di.android.di
 import org.kodein.di.instance
 
-class MainActivity : AppCompatActivity(), DIAware {
+class HomeActivity : AppCompatActivity(), DIAware {
     override val di by di()
     private lateinit var tlbToolbar: Toolbar
     private val noteVModel: NoteVModel by instance()
     private var isSecond = false
     lateinit var scvSearchNotes: SearchView
+    lateinit var dialogFragment: DialogFragment
     private lateinit var allNoteAdapter: AllNotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         tlbToolbar = findViewById(R.id.tlbToolbar)
+        setSupportActionBar(tlbToolbar)
+        tlbToolbar.setNavigationIcon(R.drawable.ic_more_24)
+
         scvSearchNotes = findViewById(R.id.scvSearchNotes)
         CoroutineScope(Dispatchers.Main).launch {
             setToolbar()
@@ -54,7 +62,16 @@ class MainActivity : AppCompatActivity(), DIAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> onBackPressed()
+            android.R.id.home -> {
+                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+                val prev: Fragment? = supportFragmentManager.findFragmentByTag("dialog")
+                if (prev != null) {
+                    ft.remove(prev)
+                }
+                ft.addToBackStack(null)
+                dialogFragment = ToolbarMenuDialogFragment()
+                dialogFragment.show(ft, "dialog")
+            }
             R.id.add -> startActivity(Intent(this, NoteAddActivity::class.java))
         }
         return super.onOptionsItemSelected(item)

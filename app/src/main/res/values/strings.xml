@@ -17,6 +17,8 @@
     <string name="lock_image">Lock Image</string>
     <string name="yesterday">Yesterday</string>
     <string name="forward_arrow_image">Forward Arrow Image</string>
+    <string name="import_title">Import</string>
+    <string name="export_title">Export</string>
 
 
 </resources>

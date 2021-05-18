@@ -30,7 +30,7 @@ abstract class NoteDB : RoomDatabase() {
         private fun buildDB(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                NoteDB::class.java, "restaurants.db"
+                NoteDB::class.java, "pKeeper.db"
             )
                 .allowMainThreadQueries()
                 .build()

@@ -18,7 +18,7 @@
         <activity android:name=".ui.PINActivity" />
         <activity android:name=".ui.NoteEditActivity" />
         <activity android:name=".ui.NoteAddActivity" />
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

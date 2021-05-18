@@ -74,7 +74,7 @@ class PatternActivity : AppCompatActivity(), DIAware {
                             getFullDate(),
                             true
                         )
-                        startActivity(Intent(this@PatternActivity, MainActivity::class.java))
+                        startActivity(Intent(this@PatternActivity, HomeActivity::class.java))
                         finishAffinity()
                     } else {
                         CoroutineScope(Dispatchers.Main).launch {
@@ -119,7 +119,7 @@ class PatternActivity : AppCompatActivity(), DIAware {
                     encryptionVModel.deleteEncryptionById(encryptionEntity.encryptionId)
                     showToastShort(this@PatternActivity, "Decrypted Successfully !!!")
                     finish()
-                    startActivity(Intent(this@PatternActivity, MainActivity::class.java))
+                    startActivity(Intent(this@PatternActivity, HomeActivity::class.java))
                 } else {
                     CoroutineScope(Dispatchers.Main).launch {
                         plvPatternLockView.setViewMode(PatternLockView.PatternViewMode.WRONG)
