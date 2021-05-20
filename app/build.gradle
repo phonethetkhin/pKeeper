@@ -79,6 +79,8 @@ dependencies {
     //Kodein Dependency Injection
     implementation "org.kodein.di:kodein-di-framework-android-x:7.4.0"
 
+    //db import/export
+    implementation 'com.github.salehyarahmadi:RoomDatabaseBackupAndRestore:v1.0.1'
 
 
 }

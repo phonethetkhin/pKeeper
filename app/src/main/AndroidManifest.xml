@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".NoteApplication"
@@ -13,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.PatternActivity"></activity>
+        <activity android:name=".ui.PatternActivity" />
         <activity android:name=".ui.FingerPrintActivity" />
         <activity android:name=".ui.PINActivity" />
         <activity android:name=".ui.NoteEditActivity" />
