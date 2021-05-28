@@ -209,7 +209,7 @@ class NoteEditActivity : AppCompatActivity(), DIAware {
     }
 
     private fun showEncryptMethodSelectionDialog() {
-        val encryptMethods = arrayOf("PIN", "Pattern", "FingerPrint")
+        val encryptMethods = arrayOf("PIN", "Pattern")
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Select Encryption Method")
@@ -221,10 +221,6 @@ class NoteEditActivity : AppCompatActivity(), DIAware {
                 1 -> {
                     showCustomDialog(PatternActivity())
                 }
-                2 -> {
-                    showToastShort(this, "FingerPrint")
-                }
-
             }
         }
         builder.show()
